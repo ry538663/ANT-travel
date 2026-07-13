@@ -69,8 +69,11 @@ const Home = () => {
             <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-black/60 border border-slate-750/50 text-indigo-300 drop-shadow-md">
               <Award className="h-3.5 w-3.5" /> India's Most Trusted Bus Partner Since 2009
             </span>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold font-display leading-tight tracking-tight text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.9)]">
-              Travel in Pure <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-indigo-100 to-orange-355 text-orange-400">Luxury & Comfort</span>
+            <h1 
+              className="text-4xl md:text-5xl lg:text-6xl font-extrabold font-display leading-tight tracking-tight text-white"
+              style={{ textShadow: '2px 2px 10px rgba(0,0,0,0.95), 0 4px 20px rgba(0,0,0,0.8)' }}
+            >
+              Travel in Pure <span className="text-indigo-300">Luxury</span> & <span className="text-orange-400">Comfort</span>
             </h1>
             <p className="text-white text-sm md:text-lg max-w-2xl mx-auto drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] font-medium">
               Book tickets across 500+ premium routes featuring high-end Scania & Volvo multi-axle sleeper coaches with guaranteed safety.
