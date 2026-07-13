@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ShieldCheck, Truck, Clock, Headphones, Award, Copy, Check } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import SearchWidget from '../components/Booking/SearchWidget';
 import { POPULAR_ROUTES, OFFERS, TESTIMONIALS } from '../utils/mockData';
 import SafeImage from '../components/Common/SafeImage';
@@ -8,6 +8,23 @@ import SafeImage from '../components/Common/SafeImage';
 const Home = () => {
   const [copiedCode, setCopiedCode] = useState('');
   const [activeReviewIndex, setActiveReviewIndex] = useState(0);
+  const [currentHeroImageIdx, setCurrentHeroImageIdx] = useState(0);
+
+  const HERO_IMAGES = [
+    '/img/1.png',
+    '/img/2.png',
+    '/img/3.png',
+    '/img/4.png',
+    '/img/5.png',
+    '/img/6.jpeg'
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentHeroImageIdx((prev) => (prev + 1) % HERO_IMAGES.length);
+    }, 4500);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleCopyCode = (code) => {
     navigator.clipboard.writeText(code);
@@ -27,9 +44,22 @@ const Home = () => {
     <div className="w-full">
       {/* 1. Hero Section */}
       <section className="relative overflow-hidden bg-slate-950 pt-20 pb-28 md:pt-24 md:pb-36 lg:pt-28 lg:pb-40 text-white">
-        {/* Decorative background blur blobs */}
-        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-orange-500/5 rounded-full blur-[100px] pointer-events-none" />
+        {/* Background Slideshow */}
+        <div className="absolute inset-0 z-0 select-none pointer-events-none">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentHeroImageIdx}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.35 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1.2 }}
+              className="absolute inset-0 bg-cover bg-center"
+              style={{ backgroundImage: `url(${HERO_IMAGES[currentHeroImageIdx]})` }}
+            />
+          </AnimatePresence>
+          {/* Overlay to darken background and blur slightly for legibility */}
+          <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-[1px]" />
+        </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
           <motion.div
