@@ -43,22 +43,20 @@ const Home = () => {
   return (
     <div className="w-full">
       {/* 1. Hero Section */}
-      <section className="relative overflow-hidden bg-slate-950 pt-20 pb-28 md:pt-24 md:pb-36 lg:pt-28 lg:pb-40 text-white">
+      <section className="relative overflow-hidden bg-black pt-20 pb-28 md:pt-24 md:pb-36 lg:pt-28 lg:pb-40 text-white">
         {/* Background Slideshow */}
         <div className="absolute inset-0 z-0 select-none pointer-events-none">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentHeroImageIdx}
               initial={{ opacity: 0 }}
-              animate={{ opacity: 0.35 }}
+              animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 1.2 }}
               className="absolute inset-0 bg-cover bg-center"
               style={{ backgroundImage: `url(${HERO_IMAGES[currentHeroImageIdx]})` }}
             />
           </AnimatePresence>
-          {/* Overlay to darken background and blur slightly for legibility */}
-          <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-[1px]" />
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
@@ -68,13 +66,13 @@ const Home = () => {
             transition={{ duration: 0.6 }}
             className="space-y-4 max-w-3xl mx-auto mb-10 md:mb-14"
           >
-            <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-black/60 border border-slate-750/50 text-indigo-300 drop-shadow-md">
               <Award className="h-3.5 w-3.5" /> India's Most Trusted Bus Partner Since 2009
             </span>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold font-display leading-tight tracking-tight text-white">
-              Travel in Pure <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-indigo-200 to-orange-400">Luxury & Comfort</span>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold font-display leading-tight tracking-tight text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.9)]">
+              Travel in Pure <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-indigo-100 to-orange-355 text-orange-400">Luxury & Comfort</span>
             </h1>
-            <p className="text-slate-400 text-sm md:text-lg max-w-2xl mx-auto">
+            <p className="text-white text-sm md:text-lg max-w-2xl mx-auto drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] font-medium">
               Book tickets across 500+ premium routes featuring high-end Scania & Volvo multi-axle sleeper coaches with guaranteed safety.
             </p>
           </motion.div>
