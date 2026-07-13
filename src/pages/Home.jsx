@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import SearchWidget from '../components/Booking/SearchWidget';
 import { POPULAR_ROUTES, OFFERS, TESTIMONIALS } from '../utils/mockData';
 import SafeImage from '../components/Common/SafeImage';
+import Fleet from './Fleet';
 
 const Home = () => {
   const [copiedCode, setCopiedCode] = useState('');
@@ -155,6 +156,11 @@ const Home = () => {
             ))}
           </div>
         </div>
+      </section>
+
+      {/* Fleet Showcase Section */}
+      <section className="bg-slate-50 border-y border-slate-200/50">
+        <Fleet />
       </section>
 
       {/* 3. Why Choose Us Section */}
