@@ -4,10 +4,12 @@ import { Calendar, Filter, Users, Shield, Tag, ChevronDown, Check, Loader2, Spar
 import { motion, AnimatePresence } from 'framer-motion';
 import { MOCK_BUSES, getSeatMapForBus, OFFERS, MOCK_TICKETS } from '../utils/mockData';
 import SearchWidget from '../components/Booking/SearchWidget';
+import { useAuth } from '../context/AuthContext';
 
 const SearchResults = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { currentUser, addBooking } = useAuth();
 
   const fromVal = searchParams.get('from') || '';
   const toVal = searchParams.get('to') || '';
@@ -222,6 +224,23 @@ const SearchResults = () => {
 
       // Add to mock tickets global db
       MOCK_TICKETS[bId] = newTicket;
+      
+      // If user is logged in, save to their account
+      if (currentUser) {
+        addBooking({
+          id: bId,
+          busId: selectedBus.id,
+          busName: selectedBus.operator + ' ' + selectedBus.type,
+          from: selectedBus.from,
+          to: selectedBus.to,
+          date: dateVal,
+          time: selectedBus.departure,
+          seats: selectedSeats.map(s => s.name),
+          totalAmount: calc.total,
+          status: 'Confirmed',
+          gpsStatus: 'Scheduled'
+        });
+      }
       
       setBookingSuccessTicket(newTicket);
       setShowPayment(false);

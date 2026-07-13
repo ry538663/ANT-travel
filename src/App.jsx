@@ -16,10 +16,14 @@ import Offers from './pages/Offers';
 import About from './pages/About';
 import Contact from './pages/Contact';
 
+// Auth Provider Context
+import { AuthProvider } from './context/AuthContext';
+
 function App() {
   return (
     <Router>
-      <div className="flex flex-col min-h-screen bg-slate-50 font-sans antialiased text-slate-800">
+      <AuthProvider>
+        <div className="flex flex-col min-h-screen bg-slate-50 font-sans antialiased text-slate-800">
         {/* Navigation Bar */}
         <Navbar />
 
@@ -45,6 +49,7 @@ function App() {
         {/* Footer */}
         <Footer />
       </div>
+      </AuthProvider>
     </Router>
   );
 }

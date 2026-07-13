@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ShieldCheck, Info, Users, Tag, Calendar, Search, MapPin, CheckCircle, RefreshCw, X, MessageSquare, HelpCircle, PhoneCall, Route, Landmark } from 'lucide-react';
 import { FLEET } from '../utils/mockData';
 import { motion, AnimatePresence } from 'framer-motion';
 import SafeImage from '../components/Common/SafeImage';
+import { useAuth } from '../context/AuthContext';
 
 const Fleet = () => {
+  const { currentUser, addInquiry } = useAuth();
   const [filterCategory, setFilterCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -18,6 +20,17 @@ const Fleet = () => {
   const [submitting, setSubmitting] = useState(false);
   const [enquirySuccess, setEnquirySuccess] = useState(false);
   const [receiptCode, setReceiptCode] = useState('');
+
+  // Prefill user details if logged in
+  useEffect(() => {
+    if (currentUser) {
+      setName(currentUser.name);
+      setPhone(currentUser.phone);
+    } else {
+      setName('');
+      setPhone('');
+    }
+  }, [currentUser, selectedVehicle]);
 
   // Detailed Rates Modal States
   const [activeDetailsVehicle, setActiveDetailsVehicle] = useState(null);
@@ -45,11 +58,27 @@ const Fleet = () => {
       setReceiptCode(code);
       setEnquirySuccess(true);
       
+      // If user is logged in, save to their account
+      if (currentUser) {
+        addInquiry({
+          id: code,
+          vehicleName: selectedVehicle.name,
+          date: tripDate || new Date().toISOString().split('T')[0],
+          destination: destination,
+          status: 'Pending Callback'
+        });
+      }
+      
       // Reset inputs
-      setName('');
-      setPhone('');
-      setTripDate('');
-      setDestination('');
+      if (currentUser) {
+        setTripDate('');
+        setDestination('');
+      } else {
+        setName('');
+        setPhone('');
+        setTripDate('');
+        setDestination('');
+      }
     }, 1500);
   };
 

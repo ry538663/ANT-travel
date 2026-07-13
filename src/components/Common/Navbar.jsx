@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, Link, useLocation } from 'react-router-dom';
-import { Menu, X, Phone, Compass, Calendar, Gift, Info, MessageSquare, Image as ImageIcon } from 'lucide-react';
+import { Menu, X, Phone, Compass, Calendar, Gift, Info, MessageSquare, Image as ImageIcon, User, LogOut, UserCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuth } from '../../context/AuthContext';
+import AuthModal from '../Auth/AuthModal';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const location = useLocation();
+  const { currentUser, logout } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -103,11 +108,57 @@ const Navbar = () => {
               ))}
             </div>
 
-            {/* Call to action button */}
-            <div className="hidden lg:flex items-center">
+            {/* Auth section */}
+            <div className="hidden lg:flex items-center gap-3.5 ml-4">
+              {currentUser ? (
+                <div className="relative">
+                  <button
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className="flex items-center gap-2 bg-indigo-50 border border-indigo-150 py-2 px-4 rounded-xl text-slate-800 font-bold text-xs hover:bg-indigo-100/50 transition-all shrink-0"
+                  >
+                    <User className="h-4 w-4 text-indigo-600" />
+                    <span>{currentUser.name}</span>
+                  </button>
+                  
+                  {isDropdownOpen && (
+                    <div className="absolute right-0 mt-2.5 w-48 bg-white border border-slate-200 rounded-2xl shadow-xl py-2.5 z-50">
+                      <div className="px-4 py-2 border-b border-slate-100 mb-1.5">
+                        <span className="text-[9px] uppercase tracking-wider font-extrabold text-slate-400 block">Logged In As</span>
+                        <span className="text-xs font-bold text-slate-800 block truncate">{currentUser.email}</span>
+                      </div>
+                      <Link
+                        to="/track"
+                        onClick={() => setIsDropdownOpen(false)}
+                        className="flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-indigo-50 hover:text-indigo-650 transition-colors w-full text-left"
+                      >
+                        <Calendar className="h-3.5 w-3.5" />
+                        My Bookings
+                      </Link>
+                      <button
+                        onClick={() => {
+                          logout();
+                          setIsDropdownOpen(false);
+                        }}
+                        className="flex items-center gap-2 px-4 py-2 text-xs font-semibold text-red-650 hover:bg-red-50 transition-colors w-full text-left"
+                      >
+                        <LogOut className="h-3.5 w-3.5" />
+                        Sign Out
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <button
+                  onClick={() => setIsAuthOpen(true)}
+                  className="border border-slate-250 hover:border-slate-350 text-slate-700 font-bold text-xs px-4 py-2.5 rounded-xl transition-all hover:bg-slate-50"
+                >
+                  Sign In
+                </button>
+              )}
+
               <Link
                 to="/"
-                className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm px-5 py-2.5 rounded-xl shadow-lg shadow-indigo-150 transition-all duration-300 hover:shadow-indigo-200 hover:-translate-y-0.5"
+                className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs uppercase tracking-wider px-5 py-2.5 rounded-xl shadow shadow-indigo-100 hover:shadow-md transition-all duration-200 hover:-translate-y-0.5"
               >
                 Book Tickets
               </Link>
@@ -152,10 +203,44 @@ const Navbar = () => {
                     {link.name}
                   </NavLink>
                 ))}
-                <div className="pt-4 pb-2 px-4">
+                <div className="pt-4 pb-2 px-4 border-t border-slate-100 space-y-3.5">
+                  {currentUser ? (
+                    <div className="space-y-3 bg-slate-50 p-4.5 rounded-2xl border border-slate-200/50">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm">
+                          {currentUser.name[0]}
+                        </div>
+                        <div>
+                          <span className="text-xs font-bold text-slate-800 block leading-tight">{currentUser.name}</span>
+                          <span className="text-[10px] text-slate-500 block leading-none">{currentUser.email}</span>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Link
+                          to="/track"
+                          className="flex-1 text-center bg-indigo-50 border border-indigo-100 text-indigo-650 hover:bg-indigo-100 text-xs font-bold py-2 rounded-xl transition-all"
+                        >
+                          Bookings
+                        </Link>
+                        <button
+                          onClick={() => logout()}
+                          className="flex-1 text-center bg-red-50 text-red-650 hover:bg-red-100 text-xs font-bold py-2 rounded-xl transition-all text-red-600"
+                        >
+                          Sign Out
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setIsAuthOpen(true)}
+                      className="block w-full text-center bg-indigo-50 border border-indigo-150 text-indigo-650 hover:bg-indigo-100 font-bold text-xs py-3 rounded-xl transition-all text-indigo-600"
+                    >
+                      Sign In
+                    </button>
+                  )}
                   <Link
                     to="/"
-                    className="block w-full text-center bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-3 rounded-xl shadow-lg transition-all"
+                    className="block w-full text-center bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs uppercase tracking-wider py-3 rounded-xl shadow shadow-indigo-100 transition-all"
                   >
                     Book Tickets Now
                   </Link>
@@ -165,6 +250,7 @@ const Navbar = () => {
           )}
         </AnimatePresence>
       </nav>
+      <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
     </>
   );
 };

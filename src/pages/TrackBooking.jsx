@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Search, MapPin, Compass, AlertTriangle, CheckCircle, RefreshCw, XCircle, ShieldAlert } from 'lucide-react';
+import { Search, MapPin, Compass, AlertTriangle, CheckCircle, RefreshCw, XCircle, ShieldAlert, Calendar } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MOCK_TICKETS } from '../utils/mockData';
+import { useAuth } from '../context/AuthContext';
 
 const TrackBooking = () => {
+  const { currentUser } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   
   const queryId = searchParams.get('id') || '';
@@ -98,7 +100,109 @@ const TrackBooking = () => {
         </p>
       </div>
 
+      {/* Customer Profile Banner */}
+      {currentUser && (
+        <div className="bg-gradient-to-r from-indigo-900 to-indigo-950 p-6 rounded-3xl text-white mb-8 border border-slate-800 shadow relative overflow-hidden">
+          <div className="absolute right-0 top-0 w-32 h-32 bg-orange-500/10 rounded-full blur-2xl pointer-events-none" />
+          <h2 className="text-lg font-bold font-display leading-tight">Customer Dashboard</h2>
+          <p className="text-[11px] text-indigo-200 mt-1">
+            Hello, <span className="text-white font-bold">{currentUser.name}</span>. Manage your ticket bookings and active rental inquiries below.
+          </p>
+          <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-white/10">
+            <div>
+              <span className="text-[9px] uppercase font-bold text-indigo-300 tracking-wider block">Registered Email</span>
+              <span className="text-xs font-semibold block truncate mt-0.5">{currentUser.email}</span>
+            </div>
+            <div>
+              <span className="text-[9px] uppercase font-bold text-indigo-300 tracking-wider block">Phone Number</span>
+              <span className="text-xs font-semibold block mt-0.5">{currentUser.phone}</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Active History Grid */}
+      {currentUser && (
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 mb-10">
+          {/* Left: Bookings */}
+          <div className="md:col-span-7 space-y-4">
+            <h3 className="font-bold text-slate-800 text-xs font-display flex items-center gap-1.5 uppercase tracking-wider">
+              <Calendar className="h-4.5 w-4.5 text-indigo-650 text-indigo-600" />
+              <span>Your Booked Tickets ({currentUser.bookings.length})</span>
+            </h3>
+            
+            {currentUser.bookings.length === 0 ? (
+              <div className="bg-white border border-slate-200/50 p-6 rounded-2xl text-center">
+                <p className="text-xs text-slate-500 font-medium">You haven't booked any bus tickets yet.</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {currentUser.bookings.map((b) => (
+                  <div 
+                    key={b.id} 
+                    className="bg-white border border-slate-200/50 p-4 rounded-2xl flex items-center justify-between shadow-sm hover:border-indigo-200 transition-colors"
+                  >
+                    <div className="pr-2 truncate">
+                      <span className="text-[9px] font-bold text-indigo-650 text-indigo-600 bg-indigo-50 py-0.5 px-2 rounded-lg uppercase tracking-wider">{b.id}</span>
+                      <h4 className="font-bold text-slate-800 text-xs mt-2">{b.from} → {b.to}</h4>
+                      <p className="text-[10px] text-slate-500 mt-1 truncate">{b.busName} • {b.date}</p>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setBookingId(b.id);
+                        setPhone(currentUser.phone);
+                        handleSearch(null, b.id, currentUser.phone);
+                      }}
+                      className="bg-indigo-50 border border-indigo-100 hover:bg-indigo-100/70 text-indigo-650 text-indigo-600 font-bold text-xs py-2 px-3 rounded-xl transition-all shrink-0"
+                    >
+                      Track GPS
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Right: Inquiries */}
+          <div className="md:col-span-5 space-y-4">
+            <h3 className="font-bold text-slate-800 text-xs font-display flex items-center gap-1.5 uppercase tracking-wider">
+              <MapPin className="h-4.5 w-4.5 text-orange-500" />
+              <span>Hire Inquiries ({currentUser.inquiries.length})</span>
+            </h3>
+            
+            {currentUser.inquiries.length === 0 ? (
+              <div className="bg-white border border-slate-200/50 p-6 rounded-2xl text-center">
+                <p className="text-xs text-slate-500 font-medium">No active rental requests found.</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {currentUser.inquiries.map((inq) => (
+                  <div 
+                    key={inq.id} 
+                    className="bg-white border border-slate-200/50 p-4 rounded-2xl shadow-sm space-y-2.5"
+                  >
+                    <div className="flex justify-between items-start gap-2">
+                      <div className="min-w-0 flex-1">
+                        <h4 className="font-bold text-slate-800 text-xs truncate leading-snug">{inq.vehicleName}</h4>
+                        <span className="text-[9px] text-slate-500 block mt-0.5 truncate">Date: {inq.date} • Dest: {inq.destination}</span>
+                      </div>
+                      <span className="text-[8px] font-bold text-orange-650 text-orange-500 bg-orange-50 py-0.5 px-2 rounded-full shrink-0 uppercase tracking-wider">
+                        {inq.status}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Query Form */}
+      <h3 className="font-bold text-slate-800 text-xs font-display flex items-center gap-1.5 uppercase tracking-wider mb-3">
+        <Search className="h-4.5 w-4.5 text-slate-500" />
+        <span>Search Booking Manually</span>
+      </h3>
       <form onSubmit={(e) => handleSearch(e)} className="bg-white p-5 md:p-6 rounded-3xl border border-slate-200/60 shadow-md mb-8">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
           <div className="md:col-span-5 bg-slate-50 border border-slate-200/50 rounded-2xl p-2.5">
